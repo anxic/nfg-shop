@@ -12,7 +12,7 @@ services:
     environment:
       - SYMFONY_ENV=dev
     depends_on:
-      - db
+      - database
     networks:
       - symfony
 
@@ -29,19 +29,28 @@ services:
     networks:
       - symfony
 
-  db:
-    image: postgres:17
-    container_name: nfq-shop
+
+###> doctrine/doctrine-bundle ###
+  database:
+    image: postgres:${POSTGRES_VERSION:-17}-alpine
+    container_name: symfony_db
     environment:
-      POSTGRES_DB: nfq_shop
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+      # You should definitely change the password in production
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB:-app}", "-U", "${POSTGRES_USER:-app}"]
+      timeout: 5s
+      retries: 5
+      start_period: 60s
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - database_data:/var/lib/postgresql/data:rw
     networks:
       - symfony
+###< doctrine/doctrine-bundle ###
 
 networks:
   symfony:
@@ -50,3 +59,7 @@ networks:
 volumes:
   pgdata:
     driver: local
+
+###> doctrine/doctrine-bundle ###
+  database_data:
+###< doctrine/doctrine-bundle ###

@@ -7,6 +7,8 @@
         "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "doctrine/doctrine-migrations-bundle": "^3.3",
+        "doctrine/orm": "^3.3",
         "symfony/console": "7.1.*",
         "symfony/dotenv": "7.1.*",
         "symfony/flex": "^2",
@@ -15,9 +17,10 @@
         "symfony/yaml": "7.1.*"
     },
     "require-dev": {
+        "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.0",
-        "symplify/easy-coding-standard": "^11.0",
-        "phpstan/phpstan": "^1.10"
+        "symfony/maker-bundle": "^1.61",
+        "symplify/easy-coding-standard": "^11.0"
     },
     "config": {
         "allow-plugins": {
@@ -29,12 +32,12 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "WolfShop\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/"
+            "WolfShop\\Tests\\": "tests/"
         }
     },
     "replace": {
@@ -70,7 +73,8 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.1.*"
+            "require": "7.1.*",
+            "docker": true
         }
     }
 }
