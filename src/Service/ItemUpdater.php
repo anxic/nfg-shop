@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace WolfShop;
+namespace WolfShop\Service;
 
-final class WolfService
+final class ItemUpdater
 {
     /**
      * @param Item[] $items

@@ -1,5 +1,5 @@
 controllers:
     resource:
         path: ../src/Controller/
-        namespace: App\Controller
+        namespace: WolfShop\Controller
     type: attribute
