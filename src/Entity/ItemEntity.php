@@ -6,12 +6,16 @@ namespace WolfShop\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use WolfShop\Item;
+use WolfShop\Strategy\LegendaryItemStrategy;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'items')]
 class ItemEntity
 {
+    use TimestampableEntity;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER)]
@@ -28,6 +32,9 @@ class ItemEntity
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
     private ?string $imgUrl = null;
+
+    #[ORM\Column(type: Types::STRING, enumType: ItemCategoryEnum::class)]
+    private ItemCategoryEnum $category;
 
     public function getId(): int
     {
@@ -77,7 +84,7 @@ class ItemEntity
         return $this;
     }
 
-    public function getImgUrl(): string
+    public function getImgUrl(): ?string
     {
         return $this->imgUrl;
     }
@@ -89,9 +96,30 @@ class ItemEntity
         return $this;
     }
 
+    public function getCategory(): ItemCategoryEnum
+    {
+        return $this->category;
+    }
+
+    public function setCategory(ItemCategoryEnum $category): self
+    {
+        $this->category = $category;
+
+        if ($category === ItemCategoryEnum::Legendary) {
+            $this->setQuality(LegendaryItemStrategy::LEGENDARY_QUALITY);
+        }
+
+        return $this;
+    }
+
     public function toItem(): Item
     {
-        return new Item($this->name, $this->sellIn, $this->quality);
+        $item = new Item($this->name, $this->sellIn, $this->quality);
+        if ($this->imgUrl !== null) {
+            $item->setImgUrl($this->imgUrl);
+        }
+
+        return $item;
     }
 
     public static function fromItem(Item $item): self
@@ -100,6 +128,7 @@ class ItemEntity
         $entity->name = $item->name;
         $entity->sellIn = $item->sellIn;
         $entity->quality = $item->quality;
+        $entity->imgUrl = $item->getImgUrl();
 
         return $entity;
     }
