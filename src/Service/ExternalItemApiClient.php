@@ -15,12 +15,12 @@ use WolfShop\DTO\ApiItemDTO;
 use WolfShop\Exception\ApiClientException;
 use WolfShop\Strategy\AbstractItemUpdateStrategy;
 
-class ExternalItemApiClient
+final class ExternalItemApiClient
 {
     private const API_URL = 'https://api.restful-api.dev/objects';
 
     public function __construct(
-        private HttpClientInterface $httpClient
+        private readonly HttpClientInterface $httpClient
     ) {
     }
 
@@ -40,8 +40,6 @@ class ExternalItemApiClient
 
     /**
      * Sends a GET request to the external API.
-     *
-     * @return ResponseInterface
      *
      * @throws ApiClientException
      */

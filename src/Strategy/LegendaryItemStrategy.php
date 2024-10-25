@@ -16,8 +16,8 @@ class LegendaryItemStrategy extends AbstractItemUpdateStrategy
         $item->quality = self::LEGENDARY_QUALITY;
     }
 
-    public function getCategory(): ItemCategoryEnum
+    public static function getCategory(): string
     {
-        return ItemCategoryEnum::Legendary;
+        return ItemCategoryEnum::Legendary->value;
     }
 }

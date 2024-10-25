@@ -19,8 +19,8 @@ class NormalItemStrategy extends AbstractItemUpdateStrategy
         }
     }
 
-    public function getCategory(): ItemCategoryEnum
+    public static function getCategory(): string
     {
-        return ItemCategoryEnum::Normal;
+        return ItemCategoryEnum::Normal->value;
     }
 }

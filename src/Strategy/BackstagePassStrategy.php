@@ -24,8 +24,8 @@ class BackstagePassStrategy extends AbstractItemUpdateStrategy
         $this->decreaseSellIn($item);
     }
 
-    public function getCategory(): ItemCategoryEnum
+    public static function getCategory(): string
     {
-        return ItemCategoryEnum::BackstagePass;
+        return ItemCategoryEnum::BackstagePass->value;
     }
 }

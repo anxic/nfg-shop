@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace WolfShop\DTO;
 
-class ApiItemDTO
+final class ApiItemDTO
 {
     public function __construct(
         private string $id,

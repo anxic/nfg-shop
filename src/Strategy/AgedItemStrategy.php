@@ -19,8 +19,8 @@ class AgedItemStrategy extends AbstractItemUpdateStrategy
         }
     }
 
-    public function getCategory(): ItemCategoryEnum
+    public static function getCategory(): string
     {
-        return ItemCategoryEnum::Aged;
+        return ItemCategoryEnum::Aged->value;
     }
 }
