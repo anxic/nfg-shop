@@ -6,6 +6,9 @@ namespace WolfShop\DTO;
 
 final class ApiItemDTO
 {
+    /**
+     * @param ?array<string, mixed> $attributes
+     */
     public function __construct(
         private string $id,
         private string $name,

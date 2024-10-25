@@ -21,7 +21,7 @@ class ItemEntity
     #[ORM\Column(type: Types::INTEGER)]
     private int $id;
 
-    #[ORM\Column(type: Types::STRING)]
+    #[ORM\Column(type: Types::STRING, unique: true)]
     private string $name;
 
     #[ORM\Column(type: Types::INTEGER)]
@@ -30,8 +30,11 @@ class ItemEntity
     #[ORM\Column(type: Types::INTEGER)]
     private int $quality;
 
-    #[ORM\Column(type: Types::STRING, nullable: true)]
-    private ?string $imgUrl = null;
+    // In case of we need to query about the url from the image
+    // I recommend to use a separate table for the images
+    /** @param array<string, string> $imageData */
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $imageData = null;
 
     #[ORM\Column(type: Types::STRING, enumType: ItemCategoryEnum::class)]
     private ItemCategoryEnum $category;
@@ -84,16 +87,20 @@ class ItemEntity
         return $this;
     }
 
-    public function getImgUrl(): ?string
+    public function getImageData(): ?array
     {
-        return $this->imgUrl;
+        return $this->imageData;
     }
 
-    public function setImgUrl(string $imgUrl): self
+    public function setImageData(?array $imageData): self
     {
-        $this->imgUrl = $imgUrl;
-
+        $this->imageData = $imageData;
         return $this;
+    }
+
+    public function getImgUrl(): ?string
+    {
+        return $this->getImageData()['url'] ?? null;
     }
 
     public function getCategory(): ItemCategoryEnum
@@ -115,8 +122,8 @@ class ItemEntity
     public function toItem(): Item
     {
         $item = new Item($this->name, $this->sellIn, $this->quality);
-        if ($this->imgUrl !== null) {
-            $item->setImgUrl($this->imgUrl);
+        if ($this->getImageData()['url'] ?? false) {
+            $item->setImgUrl($this->getImageData()['url']);
         }
 
         return $item;
@@ -128,7 +135,6 @@ class ItemEntity
         $entity->name = $item->name;
         $entity->sellIn = $item->sellIn;
         $entity->quality = $item->quality;
-        $entity->imgUrl = $item->getImgUrl();
 
         return $entity;
     }

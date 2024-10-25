@@ -11,10 +11,10 @@ class ApiClientException extends HttpException
     /**
      * ApiClientException constructor.
      *
-     * @param string          $message   Message de l'exception
-     * @param \Throwable|null $previous  Exception précédente
-     * @param int             $code      Code d'erreur (HTTP)
-     * @param array           $headers   En-têtes de la réponse
+     * @param string                         $message   Exception message
+     * @param \Throwable|null                $previous  Previous exception
+     * @param int                            $code      Exception code
+     * @param array<string, string|string[]> $headers   Exception headers
      */
     public function __construct(string $message = 'Error communicating with the external API', \Throwable $previous = null, int $code = 500, array $headers = [])
     {
