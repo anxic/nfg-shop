@@ -1,69 +1,182 @@
-# Coding assessment - PHP Version
+# NFQ-Shop
 
-## Dear Candidate
-Welcome to our take-home coding assessment. 
-We trust you'll find this assessment both challenging and rewarding, and we look forward to the opportunity to discuss your accomplishments further in the next stage.
+## Prerequisites
 
-## Project features
-We have a system in place that updates our inventory for us.
+To set up and run this project, ensure the following tools are installed on your system:
 
-- All items have a `SellIn` value which denotes the number of days we have to sell the items
-- All items have a `Quality` value which denotes how valuable the item is
-- At the end of each day our system lowers both values for every item
+- **Docker**: Docker is required to create and manage containers for running the application.
+  - [Download Docker](https://docs.docker.com/get-docker/)
 
-Pretty simple, right? Well this is where it gets interesting:
+- **Docker Compose**: Docker Compose is used to define and run multi-container Docker applications.
+  - Docker Desktop includes Docker Compose by default, but you can also install it separately if needed.
+  - [Download Docker Compose](https://docs.docker.com/compose/install/)
 
-- Once the sell by date has passed, Quality degrades twice as fast
-- The Quality of an item is never negative
-- **"Apple AirPods"** actually increases in Quality the older it gets
-- The Quality of an item is never more than 50
-- **"Samsung Galaxy S23"**, being a legendary item, never has to be sold or decreases in Quality
-- **"Apple iPad Air"**, like **"Apple AirPods"**, increases in Quality as its SellIn value approaches;
-- `Quality` increases by `2` when there are `10` days or less and by `3` when there are `5` days or less but
-- `Quality` drops to `0` after the concert
+Ensure both are installed and running before proceeding with the setup instructions.
 
-We have recently signed a supplier of conjured items. This requires an update to our system:
+## Setup Instructions
 
-- **"Xiaomi Redmi Note 13"** items degrade in `Quality` twice as fast as normal items
+Follow these steps to set up the project. Each command includes a brief description of its purpose.
 
-Feel free to make any changes to the `UpdateQuality` method and add any new code as long as everything still works correctly. 
-However, do not alter the Item class or Items property as those belong to the goblin in the corner who will insta-rage and one-shot you as he doesn't believe in shared code ownership (you can make the `UpdateQuality` method and `Items` property static if you like, we'll cover for you).
+1. **Clone the repository:**
 
-Just for clarification, an item can never have its `Quality` increase above `50`, however **"Samsung Galaxy S23"** is a legendary item and as such its `Quality` is `80` & it never alters.
+    Clone the project repository to your local machine.
 
-## Folders
+    ```sh
+    git clone https://github.com/anxic/nfq-shop.git
+    cd nfq-shop
+    ```
 
-- `src` - contains the two classes:
-    - `Item.php` - this class should not be changed
-    - `WolfService.php` - this class needs to be refactored, and the new feature added
+2. **Build Docker images:**
 
-## 🎯 Goal
-- Refactor the `WolfService` class to make any changes to the `UpdateQuality` method and add any new code as long as everything still works correctly.
-- Store the `Items` in a storage engine of your choice. (e.g. Database, In-memory)  
-- Create a console command to import `Item` to our inventory  from API `https://api.restful-api.dev/objects` (https://restful-api.dev/). In case Item already exists by `name` in the storage, update `Quality` for it.
-- Provide another API endpoint to upload `imgUrl` via [https://cloudinary.com](https://cloudinary.com/documentation/php_image_and_video_upload) (credentials will be sent in email's attachment) for the `Item`. API should be authentication with basic username/password login. The credentials can be hardcoded.
-- Unit testing.
+    Build the Docker images specified in the `docker-compose.yml` file. This step creates isolated environments for the application, database, and other services.
 
-## 💡 Hints before you start working on it
-* Keep KISS, DRY, YAGNI, SOLID principles in mind.
-* Your code should be tested
+    ```sh
+    docker compose build
+    ```
 
-## How to submit your work
-- You can do with Laravel or Symfony framework.
-- Start by creating a new Git repository on a platform like GitHub, GitLab, or Bitbucket (all the code is your IP)
-- Create README.md for the project with the setup instruction
-- The server must be able to run and tested based on the README instructions
-- Upload the Postman workspace
-- Share the public git repository URL
+3. **Start the containers:**
 
-### Bonus:
-- Dockerize the application
-- CI/CD skeleton
-- Server scalability
+    Start the Docker containers in detached mode (`-d`), which runs them in the background. This initializes the environment with all necessary services.
 
-## Recommendations
-- Read the features and the bonus features carefully before you start coding
-- Committing changes at appropriate intervals in Git
-- Leave TODO in the code if you couldn't finish a solution, you have chance to explain it during the interview
+    ```sh
+    docker compose up -d
+    ```
 
-**Happy coding**!
+4. **Install PHP dependencies:**
+
+    Use Composer to install the project’s PHP dependencies, specified in `composer.json`. This installs all necessary libraries and tools for the project.
+
+    ```sh
+    docker compose run --rm app composer install
+    ```
+
+5. **Run database migrations:**
+
+    Execute the Doctrine migrations to apply any database schema changes. This ensures that the database structure is correctly set up.
+
+    ```sh
+    docker compose run --rm app php bin/console doctrine:migrations:migrate
+    ```
+
+6. **Load sample data (fixtures):**
+
+    Load fixture data into the database. Fixtures provide pre-defined data samples, useful for testing or initializing a working environment with example data.
+
+    ```sh
+    docker compose run --rm app php bin/console doctrine:fixtures:load
+    ```
+
+7. **Generate JWT keys:**
+
+    Generate JWT (JSON Web Token) private and public keys, which are required for secure API authentication. The `--overwrite` flag replaces any existing keys, useful for fresh setups.
+
+    ```sh
+    docker compose run --rm app php bin/console lexik:jwt:generate-keypair --overwrite
+    ```
+
+8. **Regenerate user password hash (if needed):**
+
+    Hash a password to be used in `security.yaml`. This step allows you to secure specific accounts with hashed passwords, which are then stored in the configuration file.
+
+    ```sh
+    docker compose run --rm app php bin/console security:hash-password
+    ```
+
+    After running the command, copy the generated hashed password and add it to the `security.yaml` file. This file defines user credentials for authentication.
+
+    Example configuration in `security.yaml`:
+
+    ```yaml
+    # config/packages/security.yaml
+
+    providers:
+        users_in_memory:
+            memory:
+                users:
+                    user@wolfshop.fr:
+                        password: 'HASHED_PASSWORD' # Use your generated password hash
+                        roles: 'ROLE_API_USER'
+    ```
+
+This setup ensures your application is properly configured and secure, with hashed passwords and environment setup handled through Docker.
+
+### Available Makefile Commands
+
+- **Build Docker images:**
+
+    ```sh
+    make build
+    ```
+
+- **Start the containers:**
+
+    ```sh
+    make up
+    ```
+
+- **Stop the containers:**
+
+    ```sh
+    make down
+    ```
+
+- **Restart the containers:**
+
+    ```sh
+    make restart
+    ```
+
+- **Install PHP dependencies:**
+
+    ```sh
+    make composer-install
+    ```
+
+- **Run PHPStan for static analysis:**
+
+    ```sh
+    make phpstan
+    ```
+
+- **Check coding standards:**
+
+    ```sh
+    make ecs-check
+    ```
+
+- **Fix coding standards:**
+
+    ```sh
+    make ecs-fix
+    ```
+
+- **Run PHPUnit tests:**
+
+    ```sh
+    make phpunit
+    ```
+
+## Dependencies
+
+### Main Packages
+
+- **[cloudinary/cloudinary_php](https://github.com/cloudinary/cloudinary_php)**: Manages media (image and video) uploads, transformations, and delivery through Cloudinary.
+- **[doctrine/doctrine-migrations-bundle](https://github.com/doctrine/DoctrineMigrationsBundle)**: Handles database schema migrations in Symfony applications.
+- **[doctrine/orm](https://github.com/doctrine/orm)**: Object-Relational Mapper (ORM) for handling database interactions through Doctrine.
+- **[gedmo/doctrine-extensions](https://github.com/doctrine-extensions/DoctrineExtensions)**: Adds advanced features (like timestampable, sluggable) to Doctrine entities.
+- **[lexik/jwt-authentication-bundle](https://github.com/lexik/LexikJWTAuthenticationBundle)**: Implements JWT authentication for secure API authorization.
+- **[stof/doctrine-extensions-bundle](https://github.com/stof/StofDoctrineExtensionsBundle)**: Integrates Doctrine extensions, like sortable or loggable, within Symfony.
+- **[symfony/console](https://github.com/symfony/console)**: Provides command-line interface (CLI) support for Symfony applications.
+- **[symfony/dotenv](https://github.com/symfony/dotenv)**: Loads environment variables from a `.env` file into Symfony.
+- **[symfony/framework-bundle](https://github.com/symfony/framework-bundle)**: The core of a Symfony application, integrating essential components.
+- **[symfony/http-client](https://github.com/symfony/http-client)**: HTTP client for making external API requests.
+- **[symfony/serializer](https://github.com/symfony/serializer)**: Serializes and deserializes data, essential for APIs and data transformation.
+- **[symfony/validator](https://github.com/symfony/validator)**: Provides data validation support.
+
+### Development Packages
+
+- **[doctrine/doctrine-fixtures-bundle](https://github.com/doctrine/DoctrineFixturesBundle)**: Helps load and manage test data fixtures.
+- **[phpstan/phpstan](https://github.com/phpstan/phpstan)**: Static analysis tool to detect errors in code.
+- **[phpunit/phpunit](https://github.com/sebastianbergmann/phpunit)**: Unit testing framework for PHP applications.
+- **[symfony/maker-bundle](https://github.com/symfony/maker-bundle)**: Generates boilerplate code for Symfony components.
+- **[symplify/easy-coding-standard](https://github.com/symplify/easy-coding-standard)**: Ensures consistent code style.

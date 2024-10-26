@@ -30,8 +30,6 @@ ecs-check: ## Check coding standards
 ecs-fix: ## Fix coding standards
 	docker compose run --rm app vendor/bin/ecs check --fix
 
-tests: ## Run PHPUnit tests
+phpunit: ## Run PHPUnit tests
 	docker compose run --rm app vendor/bin/phpunit
 
-test-coverage: ## Run PHPUnit tests with coverage
-	docker compose run --rm app vendor/bin/phpunit --coverage-html build/coverage
