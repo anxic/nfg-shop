@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[Autoconfigure]
-final class CloudinaryUploader
+class CloudinaryUploader
 {
     private Cloudinary $cloudinary;
 
@@ -23,7 +23,7 @@ final class CloudinaryUploader
      *
      * @param UploadedFile $file The file to be uploaded
      * @param string $folder The folder to upload the file to, e.g., "items", "profiles"
-     * @return array Returns an associative array with image metadata: 'type', 'publicId', and 'url'
+     * @return array<string, string> Returns an associative array with image metadata: 'type', 'publicId', and 'url'
      */
     public function upload(UploadedFile $file, string $folder): array
     {
@@ -36,8 +36,8 @@ final class CloudinaryUploader
 
         return [
             'type' => 'cloudinary',
-            'publicId' => $uploadedFile['public_id'],
-            'url' => $uploadedFile['secure_url'],
+            'publicId' => is_string($uploadedFile['public_id']) ? $uploadedFile['public_id'] : '',
+            'url' => is_string($uploadedFile['secure_url']) ? $uploadedFile['secure_url'] : '',
         ];
     }
 

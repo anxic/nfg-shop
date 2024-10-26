@@ -7,18 +7,18 @@ namespace WolfShop\DTO;
 final class ApiItemDTO
 {
     /**
-     * @param ?array<string, mixed> $attributes
+     * @param array<string, mixed>|null $attributes
      */
     public function __construct(
-        private string $id,
+        private int $id,
         private string $name,
         private int $sellIn,
         private int $quality,
-        private ?array $attributes
+        private ?array $attributes = null,
     ) {
     }
 
-    public function getId(): string
+    public function getId(): int
     {
         return $this->id;
     }
@@ -28,6 +28,9 @@ final class ApiItemDTO
         return $this->name;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getAttributes(): ?array
     {
         return $this->attributes;

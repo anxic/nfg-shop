@@ -26,10 +26,13 @@ class ItemRepository extends ServiceEntityRepository
      */
     public function findByNames(array $names): array
     {
-        return $this->createQueryBuilder('i')
+        /** @var ItemEntity[] $result */
+        $result = $this->createQueryBuilder('i')
             ->where('i.name IN (:names)')
             ->setParameter('names', $names)
             ->getQuery()
             ->getResult();
+
+        return $result;
     }
 }

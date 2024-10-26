@@ -9,7 +9,7 @@ use WolfShop\Item;
 
 class BackstagePassStrategy extends AbstractItemUpdateStrategy
 {
-    public function update(Item $item): void
+    public function update(Item $item, bool $updateSellIn = true): void
     {
         if ($item->sellIn > 10) {
             $this->increaseQuality($item);
@@ -21,7 +21,9 @@ class BackstagePassStrategy extends AbstractItemUpdateStrategy
             $item->quality = self::MIN_QUALITY;
         }
 
-        $this->decreaseSellIn($item);
+        if ($updateSellIn) {
+            $this->decreaseSellIn($item);
+        }
     }
 
     public static function getCategory(): string

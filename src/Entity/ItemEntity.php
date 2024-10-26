@@ -32,7 +32,9 @@ class ItemEntity
 
     // In case of we need to query about the url from the image
     // I recommend to use a separate table for the images
-    /** @param array<string, string> $imageData */
+    /**
+     * @var array<string, string>|null
+     */
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $imageData = null;
 
@@ -87,20 +89,21 @@ class ItemEntity
         return $this;
     }
 
+    /**
+     * @return array<string, string>|null
+     */
     public function getImageData(): ?array
     {
         return $this->imageData;
     }
 
+    /**
+     * @param array<string, string>|null $imageData
+     */
     public function setImageData(?array $imageData): self
     {
         $this->imageData = $imageData;
         return $this;
-    }
-
-    public function getImgUrl(): ?string
-    {
-        return $this->getImageData()['url'] ?? null;
     }
 
     public function getCategory(): ItemCategoryEnum
@@ -122,8 +125,8 @@ class ItemEntity
     public function toItem(): Item
     {
         $item = new Item($this->name, $this->sellIn, $this->quality);
-        if ($this->getImageData()['url'] ?? false) {
-            $item->setImgUrl($this->getImageData()['url']);
+        if ($this->getImgUrl() !== null) {
+            $item->setImgUrl($this->getImgUrl());
         }
 
         return $item;
@@ -137,5 +140,10 @@ class ItemEntity
         $entity->quality = $item->quality;
 
         return $entity;
+    }
+
+    private function getImgUrl(): ?string
+    {
+        return $this->getImageData()['url'] ?? null;
     }
 }

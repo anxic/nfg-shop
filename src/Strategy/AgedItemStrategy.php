@@ -9,10 +9,13 @@ use WolfShop\Item;
 
 class AgedItemStrategy extends AbstractItemUpdateStrategy
 {
-    public function update(Item $item): void
+    public function update(Item $item, bool $updateSellIn = true): void
     {
         $this->increaseQuality($item);
-        $this->decreaseSellIn($item);
+
+        if ($updateSellIn) {
+            $this->decreaseSellIn($item);
+        }
 
         if ($this->isExpired($item)) {
             $this->increaseQuality($item);

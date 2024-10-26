@@ -15,6 +15,9 @@ class ItemUpdater
      */
     private array $strategies = [];
 
+    /**
+     * @param iterable<StrategyItemUpdateStrategyInterface> $strategies
+     */
     public function __construct(
         #[AutowireIterator(
             tag: 'wolfshop.item_strategy',
@@ -27,21 +30,22 @@ class ItemUpdater
         }
     }
 
+    /**
+     * Update SellIn and Quality of an item.
+     */
     public function update(ItemEntity $itemEntity, bool $updateSellIn = true): void
     {
-        $category = $itemEntity->getCategory();
-        $strategy = $this->strategies[$category->value];
+        $category = (string) $itemEntity->getCategory()->value;
+        $strategy = $this->strategies[$category];
 
         // Convert ItemEntity to Item
         $item = $itemEntity->toItem();
 
         // Update Item using the strategy
-        $strategy->update($item);
+        $strategy->update($item, $updateSellIn);
 
         // Map updated values back to ItemEntity
-        if ($updateSellIn) {
-            $itemEntity->setSellIn($item->sellIn);
-        }
+        $itemEntity->setSellIn($item->sellIn);
         $itemEntity->setQuality($item->quality);
     }
 }

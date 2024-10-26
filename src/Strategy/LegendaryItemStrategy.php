@@ -11,7 +11,7 @@ class LegendaryItemStrategy extends AbstractItemUpdateStrategy
 {
     public const LEGENDARY_QUALITY = 80;
 
-    public function update(Item $item): void
+    public function update(Item $item, bool $updateSellIn = false): void
     {
         $item->quality = self::LEGENDARY_QUALITY;
     }

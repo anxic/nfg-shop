@@ -27,6 +27,7 @@ final class ItemImportService
     /**
      * Imports items from the external API, updating existing items or creating new ones.
      *
+     * @return int Number of items imported.
      * @throws ApiClientException
      */
     public function importItems(): int
@@ -47,6 +48,10 @@ final class ItemImportService
 
     /**
      * Maps existing items by name for efficient lookup.
+     *
+     * @param ApiItemDTO[] $itemsData
+     *
+     * @return ItemEntity[]
      */
     private function findExistingItemsByName(array $itemsData): array
     {
@@ -64,12 +69,18 @@ final class ItemImportService
 
     /**
      * Processes items by updating existing items or creating new ones.
+     *
+     * @param ApiItemDTO[] $itemsData
+     * @param ItemEntity[] $existingItemsByName
+     *
+     * @return int Number of items processed.
      */
     private function processItems(array $itemsData, array &$existingItemsByName): int
     {
         $importedCount = 0;
         foreach ($itemsData as $itemDTO) {
-            $importedCount += $this->processItem($itemDTO, $existingItemsByName);
+            $isProcessed = $this->processItem($itemDTO, $existingItemsByName);
+            $importedCount += $isProcessed ? 1 : 0;
         }
 
         return $importedCount;
@@ -78,8 +89,12 @@ final class ItemImportService
     /**
      * Processes a single item, updating or creating it as necessary.
      * Updates multiple instances of an item if it reappears.
+     *
+     * @param ItemEntity[] $existingItemsByName
+     *
+     * @return bool Whether the item was processed successfully.
      */
-    private function processItem(ApiItemDTO $itemDTO, array &$existingItemsByName): int
+    private function processItem(ApiItemDTO $itemDTO, array &$existingItemsByName): bool
     {
         try {
             $name = $itemDTO->getName();
@@ -91,10 +106,10 @@ final class ItemImportService
                 $existingItemsByName[$name] = $newItem;
             }
 
-            return 1;
+            return true;
         } catch (\Exception $e) {
             $this->logger->error(sprintf('Error processing item "%s": %s', $itemDTO->getName(), $e->getMessage()));
-            return 0;
+            return false;
         }
     }
 

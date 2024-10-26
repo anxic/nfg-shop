@@ -18,11 +18,18 @@ final readonly class ItemService
     ) {
     }
 
+    /**
+     * Get a list of all items.
+     * @return ItemEntity[]
+     */
     public function listItems(): array
     {
         return $this->itemRepository->findAll();
     }
 
+    /**
+     * Find an item by its name.
+     */
     public function getItemByName(string $name): ?ItemEntity
     {
         return $this->itemRepository->findOneBy([
@@ -30,6 +37,10 @@ final readonly class ItemService
         ]);
     }
 
+    /**
+     * Upload an image for an item.
+     * @return array<string, string>
+     */
     public function uploadItemImage(ItemEntity $item, UploadedFile $file): array
     {
         $imageData = $this->cloudinaryUploader->upload($file, 'items');
@@ -40,6 +51,9 @@ final readonly class ItemService
         return $imageData;
     }
 
+    /**
+     * Delete an image for an item.
+     */
     public function deleteItemImage(ItemEntity $item): void
     {
         $imageData = $item->getImageData();

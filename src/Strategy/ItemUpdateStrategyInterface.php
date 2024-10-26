@@ -10,7 +10,7 @@ use WolfShop\Item;
 #[AutoconfigureTag('wolfshop.item_strategy')]
 interface ItemUpdateStrategyInterface
 {
-    public function update(Item $item): void;
+    public function update(Item $item, bool $updateSellIn = true): void;
 
     public static function getCategory(): string;
 }

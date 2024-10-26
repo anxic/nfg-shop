@@ -17,7 +17,7 @@ use WolfShop\Strategy\AbstractItemUpdateStrategy;
 
 final class ExternalItemApiClient
 {
-    private const API_URL = 'https://api.restful-api.dev/objects';
+    public const API_URL = 'https://api.restful-api.dev/objects';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient
@@ -34,6 +34,7 @@ final class ExternalItemApiClient
     public function fetchItems(): array
     {
         $response = $this->sendRequest();
+        /** @var array<int, array<string, mixed>> $data */
         $data = $this->parseResponse($response);
         return $this->transformDataToItems($data);
     }
@@ -64,6 +65,7 @@ final class ExternalItemApiClient
     /**
      * Parses the response content to an array.
      *
+     * @return array<string, mixed>
      * @throws ApiClientException
      */
     private function parseResponse(ResponseInterface $response): array
@@ -85,6 +87,7 @@ final class ExternalItemApiClient
     /**
      * Transforms the data array to an array of ApiItemDTO.
      *
+     * @param array<int, array<string, mixed>> $data
      * @return ApiItemDTO[]
      */
     private function transformDataToItems(array $data): array
@@ -103,19 +106,20 @@ final class ExternalItemApiClient
 
     /**
      * Creates an ApiItemDTO from item data.
+     *
+     * @param array<string, mixed> $itemData
      */
     private function createItemDTO(array $itemData): ApiItemDTO
     {
-        $id = $itemData['id'] ?? '';
-        $name = $itemData['name'] ?? '';
-        $itemDetails = $itemData['data'] ?? null;
+        $id = is_numeric($itemData['id'] ?? null) ? (int) $itemData['id'] : 0;
+        $name = is_string($itemData['name'] ?? null) ? (string) $itemData['name'] : '';
+        $itemDetails = isset($itemData['data']) && is_array($itemData['data']) ? $itemData['data'] : null;
 
-        //TODO: This is a temporary solution to generate random values for sellIn and Quality
-        // In a real-world scenario, these values should be fetched from the API response
-        $sellIn = $itemDetails['sellIn'] ?? rand(1, 30);
-        $quality = $itemDetails['quality'] ?? rand(AbstractItemUpdateStrategy::MIN_QUALITY, AbstractItemUpdateStrategy::MAX_QUALITY);
+        // Set random values because 'sellIn' and 'quality' are not provided by the API
+        $sellIn = isset($itemDetails['sellIn']) ? (int) $itemDetails['sellIn'] : rand(1, 30);
+        $quality = isset($itemDetails['quality']) ? (int) $itemDetails['quality'] : rand(AbstractItemUpdateStrategy::MIN_QUALITY, AbstractItemUpdateStrategy::MAX_QUALITY);
 
-        if (empty($name)) {
+        if (empty($name) || $id === 0) {
             throw new \InvalidArgumentException('Item ID or name is missing.');
         }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WolfShop\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,13 +54,20 @@ final class ItemController extends AbstractController
         return new JsonResponse($json, json: true);
     }
 
+    #[Route('/{item}', name: 'get_item_by_id', methods: ['GET'])]
+    public function getUtem(ItemEntity $item): JsonResponse
+    {
+        $json = $this->serializer->serialize($item, 'json');
+        return new JsonResponse($json, json: true);
+    }
+
     #[Route('/{item}/image', name: 'upload_image', methods: ['POST'])]
     public function uploadImage(ItemEntity $item, Request $request, ValidatorInterface $validator): JsonResponse
     {
         /** @var \Symfony\Component\HttpFoundation\File\UploadedFile $file */
         $file = $request->files->get('image');
 
-        if (! $file) {
+        if (! $file instanceof UploadedFile) {
             return $this->json([
                 'error' => 'No image provided',
             ], Response::HTTP_BAD_REQUEST);

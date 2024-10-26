@@ -9,10 +9,12 @@ use WolfShop\Item;
 
 class ConjuredItemStrategy extends AbstractItemUpdateStrategy
 {
-    public function update(Item $item): void
+    public function update(Item $item, bool $updateSellIn = true): void
     {
         $this->decreaseQuality($item, 2);
-        $this->decreaseSellIn($item);
+        if ($updateSellIn) {
+            $this->decreaseSellIn($item);
+        }
 
         if ($this->isExpired($item)) {
             $this->decreaseQuality($item, 2);
