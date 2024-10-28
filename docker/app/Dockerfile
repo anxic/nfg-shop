@@ -18,14 +18,5 @@ WORKDIR /var/www/html
 RUN curl -sS https://get.symfony.com/cli/installer | bash && \
     mv /root/.symfony*/bin/symfony /usr/local/bin/symfony
 
-# Set environment variable to allow Composer to run as root
-ENV COMPOSER_ALLOW_SUPERUSER=1
-
-# Copy Composer dependency files
-COPY composer.json composer.lock ./
-
-# Install Composer dependencies using cache when possible
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
-
 # Expose the default PHP-FPM port
 EXPOSE 9000

@@ -13,6 +13,7 @@ To set up and run this project, ensure the following tools are installed on your
 
 Ensure both are installed and running before proceeding with the setup instructions.
 
+
 ## Setup Instructions
 
 Follow these steps to set up the project. Each command includes a brief description of its purpose.
@@ -60,7 +61,7 @@ Follow these steps to set up the project. Each command includes a brief descript
 
 6. **Load sample data (fixtures):**
 
-    Load fixture data into the database. Fixtures provide pre-defined data samples, useful for testing or initializing a working environment with example data.
+    Load fixture data into the database. Fixtures provide pre-defined data samples, useful for initializing a working environment with example data.
 
     ```sh
     docker compose run --rm app php bin/console doctrine:fixtures:load
@@ -73,6 +74,9 @@ Follow these steps to set up the project. Each command includes a brief descript
     ```sh
     docker compose run --rm app php bin/console lexik:jwt:generate-keypair --overwrite
     ```
+
+    **Note**: If you update the `JWT_PASSPHRASE` environment variable, you must regenerate the JWT key files to ensure they align with the new passphrase. This can be done by re-running the command above.
+
 
 8. **Regenerate user password hash (if needed):**
 
@@ -100,61 +104,62 @@ Follow these steps to set up the project. Each command includes a brief descript
 
 This setup ensures your application is properly configured and secure, with hashed passwords and environment setup handled through Docker.
 
-### Available Makefile Commands
+## Environment file
+To configure the application, you need to create a `.env.local` file in the root directory and define the following environment variables:
 
-- **Build Docker images:**
+```plaintext
+APP_SECRET=
+JWT_PASSPHRASE=
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+```
 
-    ```sh
-    make build
-    ```
+## Commands
 
-- **Start the containers:**
+The application includes custom commands to manage item data within the shop. Below is a description of each command:
 
-    ```sh
-    make up
-    ```
+### Import Items Command
 
-- **Stop the containers:**
+This command imports product data from an external REST API. Running this command will fetch items from the following endpoint:
+- **API URL**: https://api.restful-api.dev/objects
 
-    ```sh
-    make down
-    ```
+You can execute this command as follows:
 
-- **Restart the containers:**
+```sh
+docker compose run --rm app php bin/console wolfshop:import-items
+```
 
-    ```sh
-    make restart
-    ```
+### Update Items Command
+This command updates the sellIn and quality attributes for all items, ensuring data accuracy based on business rules. It is recommended to set this command as a daily cron job to maintain regular updates.
 
-- **Install PHP dependencies:**
+To run the command manually:
+```sh
+docker compose run --rm app php bin/console wolfshop:update-items
+```
 
-    ```sh
-    make composer-install
-    ```
+## Postman Collections
 
-- **Run PHPStan for static analysis:**
+In the `docs/` folder, you can find Postman collections and environment configuration files to test and interact with the API. Below is an overview of each file:
 
-    ```sh
-    make phpstan
-    ```
+- **Authentication.postman_collection**: Contains the endpoint for authenticating users and retrieving the token needed for authorized requests.
+  
+- **NFQShop.postman_collection**: Includes 5 endpoints for managing items in the shop:
+  - List all items
+  - Find an item by name
+  - Find an item by ID
+  - Upload a picture for an item
+  - Delete a picture for a specific item
 
-- **Check coding standards:**
+- **Local.postman_environment**: Contains all necessary variables for the local environment, including the API base URL and other required parameters.
 
-    ```sh
-    make ecs-check
-    ```
+### Usage Instructions
 
-- **Fix coding standards:**
+1. **Get the Token**: Before using the `NFQShop` collection, authenticate the user by running the endpoint in `Authentication.postman_collection` to obtain a token. This token should be saved as an environment variable in Postman.
+   
+2. **Token Validity**: The token generated is valid for 1 hour. Make sure to regenerate it if needed during longer sessions.
 
-    ```sh
-    make ecs-fix
-    ```
-
-- **Run PHPUnit tests:**
-
-    ```sh
-    make phpunit
-    ```
+These collections and environment settings will help streamline your API testing and ensure secure access to protected endpoints.
 
 ## Dependencies
 
