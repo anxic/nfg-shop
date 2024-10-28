@@ -1,16 +1,10 @@
-includes:
-    - vendor/symplify/phpstan-extensions/config/config.neon
-    - vendor/phpstan/phpstan-phpunit/extension.neon
-
 parameters:
     paths:
-        - src
-        - tests
-        - fixtures
+        - bin/
+        - config/
+        - public/
+        - src/
+        - tests/
 
     # max is the highest level
     level: max
-
-    checkGenericClassInNonGenericObjectType: false
-
-    checkMissingIterableValueType: false

@@ -1,0 +1,303 @@
+{
+	"info": {
+		"_postman_id": "ae259f3e-5515-4712-85d1-9840fe2578ec",
+		"name": "NFQShop",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38970830"
+	},
+	"item": [
+		{
+			"name": "List items",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/items",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"items"
+					]
+				},
+				"description": "### Retrieve Items\n\nThis endpoint is used to retrieve a list of items.\n\n#### Request\n\n- Method: GET\n    \n- URL: `{{base_url}}/api/items`\n    \n\n#### Response\n\n- Status: 200 OK\n    \n- Content-Type: application/json\n    \n\nExample response body:\n\n``` json\n[{\"id\":0,\"name\":\"\",\"sellIn\":0,\"quality\":0,\"imageData\":null,\"category\":\"\",\"createdAt\":\"\",\"updatedAt\":\"\"}]\n\n ```"
+			},
+			"response": []
+		},
+		{
+			"name": "Find item by Name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/items/findBy?name=Apple iPad Air",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"items",
+						"findBy"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Apple iPad Air"
+						}
+					]
+				},
+				"description": "### Get Items by Name\n\nThis endpoint makes a GET request to retrieve items by name from the API.\n\n#### Request\n\n- Method: `GET`\n    \n- Endpoint: `{{base_url}}/api/items/findBy`\n    \n- Query Parameters:\n    \n    - `name`: \"Apple iPad Air\"\n        \n\n#### Response\n\nA successful response will have a status code of `200` and a `Content-Type` of `application/json`. The response body will include the following JSON data:\n\n``` json\n{\n  \"id\": 0,\n  \"name\": \"\",\n  \"sellIn\": 0,\n  \"quality\": 0,\n  \"imageData\": null,\n  \"category\": \"\",\n  \"createdAt\": \"\",\n  \"updatedAt\": \"\"\n}\n\n ```"
+			},
+			"response": []
+		},
+		{
+			"name": "Find item by Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/items/:id",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"items",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": ""
+						}
+					]
+				},
+				"description": "This is a GET request to fetch details of a specific item by its ID from the API endpoint. The response of this request is a JSON object with the following schema:\n\n``` json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"number\"\n    },\n    \"name\": {\n      \"type\": \"string\"\n    },\n    \"sellIn\": {\n      \"type\": \"number\"\n    },\n    \"quality\": {\n      \"type\": \"number\"\n    },\n    \"imageData\": {\n      \"type\": [\"null\", \"array\"]\n    },\n    \"category\": {\n      \"type\": \"string\"\n    },\n    \"createdAt\": {\n      \"type\": \"string\"\n    },\n    \"updatedAt\": {\n      \"type\": \"string\"\n    }\n  }\n}\n\n ```"
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Item Image",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/items/:id/image",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"items",
+						":id",
+						"image"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "36"
+						}
+					]
+				},
+				"description": "### Update Item Image\n\nThis endpoint allows you to update the image of a specific item.\n\n#### Request Body\n\n- form-data\n    \n    - `image` (file): The image file to be uploaded.\n        \n\n#### Response\n\nThe response of this request is a JSON schema representing the updated item with the new image. A successful response will have a status code of `200 OK` or `201 Created`."
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Item Image",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful DELETE request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/items/:id/image",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"items",
+						":id",
+						"image"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": ""
+						}
+					]
+				},
+				"description": "This is an HTTP DELETE request used to delete the image associated with a specific item identified by the provided `id`. The request does not contain a request body.\n\n### Response\n\nA successful DELETE request will return a response with a status code of `200 OK`, `202 Accepted`, or `204 No Content`."
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearer}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"let expiration = pm.environment.get('token_expire_at');\r",
+					"let currentTime = Date.now();\r",
+					"\r",
+					"if (!expiration || currentTime > expiration) {\r",
+					"    let requestData = {\r",
+					"        url: pm.environment.get('base_url')+'/api/login_check',\r",
+					"        method: 'POST',\r",
+					"        header: {\r",
+					"            'Content-Type': 'application/json'\r",
+					"        },\r",
+					"        body: {\r",
+					"            mode: 'raw',\r",
+					"            raw: [\r",
+					"                { key: 'username', value: pm.environment.get('username') },\r",
+					"                { key: 'password', value: pm.environment.get('password') },\r",
+					"            ]\r",
+					"        }\r",
+					"    };\r",
+					"\r",
+					"    pm.sendRequest(requestData, function (err, response) {\r",
+					"        if (err) {\r",
+					"            console.error('Token request error:', err);\r",
+					"        } else {\r",
+					"            let responseData = response.json();\r",
+					"            if (responseData.token) {\r",
+					"                pm.environment.set('token', responseData.token);\r",
+					"\r",
+					"                // Set the token expiration to 55 minutes from now to avoid timing issues.\r",
+					"                let newExpiration = Date.now() + 55 * 60 * 1000;\r",
+					"                pm.environment.set('RENEW_TIME', newExpiration);\r",
+					"\r",
+					"                console.log('Token refreshed successfully');\r",
+					"            } else {\r",
+					"                console.error('Token request did not return an access token:', responseData);\r",
+					"            }\r",
+					"        }\r",
+					"    });\r",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
